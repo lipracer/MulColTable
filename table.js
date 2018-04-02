@@ -45,40 +45,65 @@ $(function(){
 		});
 
 	}
+	function createTRStr(obj, isWritable)
+	{
+		trHtml = "<tr>"+
+		"<td>"+item.index+"</td>"+
+		"<td>"+item.name+"</td>"+
+		"<td>"+item.data[0]+"</td>"+
+		"<td>"+item.data[1]+"</td>"+
+		"<td>"+item.data[2]+"</td>"+
+		"<td>"+"<div id='tv"+item.index+"'" +
+		" class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+item.index+"'"+">sumit</button>"+"</td>"+"</tr>";
+	}
 	function upDateTB(htmlobj)
 	{
 		var jsonObj = JSON.parse(htmlobj);	
 		$(jsonObj).each(function(index, item){
-					var $tr=$("#tab tr").eq(index);
-					 if($tr.size()==0){
+			var $tr=$("#tab tr").eq(index);
+			if($tr.size()==0){
 						//alert("指定的table id或行数不存在！");
-						return;
-					 }
-					 $tr1=$("#tab tr").eq(index+1);
-					 if($tr1.size()!=0)
-					 {						 
-						 if(item.data[4])
-						 {
-							 console.log(item.data[4]);
-							 $("#tv"+(index)).text(item.data[4]);
-						 }
-						 return;
-					 }
-					 trHtml = "<tr>"+
-					 "<td>"+item.index+"</td>"+
-					 "<td>"+item.name+"</td>"+
-					 "<td>"+item.data[0]+"</td>"+
-					 "<td>"+item.data[1]+"</td>"+
-					 "<td>"+item.data[2]+"</td>"+
-					 "<td>"+"<div id='tv"+item.index+"'" + " class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+item.index+"'"+">sumit</button>"+"</td>"+
-					 "</tr>";
+				return;
+			}
+			$tr1=$("#tab tr").eq(index+1);
+			if($tr1.size()!=0)
+			{						 
+				if(item.data[4])
+				{
+					console.log(item.data[4]);
+					$("#tv"+(index)).text(item.data[4]);
+				}
+				return;
+			}
+			trHtml = "<tr>"+
+			"<td>"+item.index+"</td>"+
+			"<td>"+item.name+"</td>"+
+			"<td>"+item.data[0]+"</td>"+
+			"<td>"+item.data[1]+"</td>"+
+			"<td>"+item.data[2]+"</td>"+
+			"<td>"+"<div id='tv"+item.index+"'" + " class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+item.index+"'"+">sumit</button>"+"</td>"+
+			"</tr>";
 					 
-					 $tr.after(trHtml);
-					 $("#btn"+item.index).click(postData);
-					 $("#tv"+item.index).focus(function(){console.log("focus");window.isUpdating=false;});
-					 $("#tv"+item.index).blur(function(){console.log("blur");window.isUpdating=true;});
+			$tr.after(trHtml);
+			$("#btn"+item.index).click(postData);
+			$("#tv"+item.index).focus(function(){console.log("focus");window.isUpdating=false;});
+			$("#tv"+item.index).blur(function(){console.log("blur");window.isUpdating=true;});
 					 
 		});
+		
+	}
+	function insertTable_tr(index, trData)
+	{
+		var $tr=$("#tab tr").eq(index);
+		if($tr.size()!=0)
+		{
+			alert("the item exist");
+		}
+		var strTR = "<tr>";
+		$(trData).each(function(index, item){
+			strTR += "<td><div contenteditable='true'>"+item.index+"</div></td>";
+		});
+		$("#tab tr:last").after(strTR);
 		
 	}
 	
