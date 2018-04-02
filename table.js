@@ -45,16 +45,34 @@ $(function(){
 		});
 
 	}
-	function createTRStr(obj, isWritable)
+	function insertData(e)
+	{
+		console.log($("#tab tr"+this.id.substr(3)).text());
+		function packageData(index, data)
+		{
+			this.index = index;
+			this.data = data;
+		}
+		var obj = new packageData(this.id.substr(3), $("#tv"+this.id.substr(3)).text());
+		$.ajax({
+		  type: 'POST',
+		  url: "PUT",
+		  data: JSON.stringify(obj),
+		  //success: none,
+		  dataType: "json"
+		});
+	}
+	function createTRStr(index)
 	{
 		trHtml = "<tr>"+
-		"<td>"+item.index+"</td>"+
-		"<td>"+item.name+"</td>"+
-		"<td>"+item.data[0]+"</td>"+
-		"<td>"+item.data[1]+"</td>"+
-		"<td>"+item.data[2]+"</td>"+
-		"<td>"+"<div id='tv"+item.index+"'" +
-		" class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+item.index+"'"+">sumit</button>"+"</td>"+"</tr>";
+		"<td><div contenteditable='true'></div></td>"+
+		"<td><div contenteditable='true'></div></td>"+
+		"<td><div contenteditable='true'></div></td>"+
+		"<td><div contenteditable='true'></div></td>"+
+		"<td><div contenteditable='true'></div></td>"+
+		"<td>"+"<div id='tv"+index+"'" +
+		" class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+index+"'"+">sumit</button>"+"</td>"+"</tr>";
+		$("#btn"+item.index).click(insertData);
 	}
 	function upDateTB(htmlobj)
 	{
@@ -100,10 +118,7 @@ $(function(){
 			alert("the item exist");
 		}
 		var strTR = "<tr>";
-		$(trData).each(function(index, item){
-			strTR += "<td><div contenteditable='true'>"+item.index+"</div></td>";
-		});
-		$("#tab tr:last").after(strTR);
+		$("#tab tr:last").after(createTRStr());
 		
 	}
 	
