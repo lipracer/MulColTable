@@ -30,7 +30,8 @@ class sup_thread(threading.Thread):
                     original_list.append(post_data)
            
                 elif 6==len(post_data):
-                    original_list.index(int(post_data[-1]))[-1] = post_data[-2]
+                    if int(post_data[0])<len(original_list):
+                        original_list[int(post_data[0])].append(post_data[-1])
 
                 f.seek(0)
                 f.truncate()

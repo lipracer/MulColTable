@@ -41,10 +41,14 @@ $(function(){
 		  type: 'POST',
 		  url: "PUT",
 		  data: JSON.stringify(obj),
-		  //success: none,
+		  success: succeedRet,
 		  dataType: "json"
 		});
 
+	}
+	function succeedRet(data, status, xhr)
+	{
+		console.log(status);
 	}
 	function insertData(e)
 	{
@@ -84,10 +88,10 @@ $(function(){
 	{
 		var jsonObj = JSON.parse(htmlobj);
 		var trHtml;
+
 		$(jsonObj).each(function(index, item){
 			trHtml="";
-			var $tr=$("#tab").find(index).eq(index);
-			console.log($tr.size());
+			var $tr=$("#tab").find("tr").eq(index);
 			if($tr.size()==0){
 				if(0==index){
 					trHtml = "<tr>"+
@@ -102,6 +106,7 @@ $(function(){
 				}
 				else
 				{
+					$tr=$("#tab tr:last")
 					trHtml = "<tr>"+
 					"<td>"+item[0]+"</td>"+
 					"<td>"+item[1]+"</td>"+
@@ -111,12 +116,16 @@ $(function(){
 					"<td>"+"<div id='tv"+index+"'" + " class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+index+"'"+">sumit</button>"+"</td>"+
 					"</tr>";	
 					$tr.after(trHtml);
-					$("#btn"+item.index).click(postData);
-					$("#tv"+item.index).focus(function(){console.log("focus");window.isUpdating=false;});
-					$("#tv"+item.index).blur(function(){console.log("blur");window.isUpdating=true;});					
+					$("#btn"+index).click(postData);
+					$("#tv"+index).focus(function(){console.log("focus");window.isUpdating=false;});
+					$("#tv"+index).blur(function(){console.log("blur");window.isUpdating=true;});					
 				}
-			}					 
-
+			}
+			else if(index!=0 && item.length==6)
+			{
+				console.log(""+index+" "+item[5]);
+				$("#tv"+index).text(item[5]);
+			}
 					 
 		});
 		
@@ -143,9 +152,4 @@ $(function(){
 		})
 		}
 	}
-
-
-
-
-
 })
