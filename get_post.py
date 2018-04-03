@@ -1,52 +1,7 @@
 import json
 import threading
 g_lock=threading.Lock()
-data = [{
-            "name":"yexiaochai",
-            "index": 0,
-            "data":['xx', 'xx', 'xx', 'xx']
-            },
-         {
-            "name":"luanshikuangdao",
-            "index": 1,
-            "data":['xx', 'xx', 'xx', 'xx']
-            },
-        {
-            "name":"jianjun",
-            "index": 2,
-            "data":['xx', 'xx', 'xx', 'xx']
-            },
-        {
-            "name":"yiyeshu",
-            "index": 3,
-            "data":['xx', 'xx', 'xx', 'xx']
-            },
-        {
-            "name":"suhuanzhen",
-            "index": 4,
-            "data":['xx', 'xx', 'xx', 'xx']
-            },
-        {
-            "name":"quemeiren",
-            "index": 5,
-            "data":['xx', 'xx', 'xx', 'xx']
-            },
-        {
-            "name":"junhuang",
-            "index": 6,
-            "data":['xx', 'xx', 'xx', 'xx']
-            },
-        {
-            "name":"shezhiduo",
-            "index": 7,
-            "data":['xx', 'xx', 'xx', 'xx']
-            },
-        {
-            "name":"fengcailing",
-            "index": 8,
-            "data":['xx', 'xx', 'xx', 'xx']
-            },
-         ]
+data = [["编号","负责人","崩溃次数","来源","栈信息","修复说明"]]
 
 with open('./test', 'w') as f:
     f.write(json.dumps(data))
@@ -65,17 +20,18 @@ class sup_thread(threading.Thread):
         g_lock.acquire()
         try:
             post_data = self.rfile.read(self.length).decode('utf-8')
+            print("---------------->"+post_data)
             self.rfile.close()
-            dict_data = json.loads(post_data)
+            post_data = json.loads(post_data)
             with open('./test', 'r+') as f:
                 original_data = (f.read())            
                 original_list = json.loads(original_data)
-                for i,item in enumerate(original_list):
-                    if (str(item['index']) == dict_data['index']):
-                        if len(original_list[i]['data'])==4:
-                            original_list[i]['data'].append(dict_data['data'])
-                        else:
-                            original_list[i]['data'][4] = dict_data['data']
+                if 5==len(post_data):
+                    original_list.append(post_data)
+           
+                elif 6==len(post_data):
+                    original_list.index(int(post_data[-1]))[-1] = post_data[-2]
+
                 f.seek(0)
                 f.truncate()
                 f.write(json.dumps(original_list))

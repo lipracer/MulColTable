@@ -12,6 +12,7 @@ $(function(){
 
     }
     //add()
+	$("#insert").click(insertTable_tr);
 	window.isUpdating = true;
 	syncData();
 
@@ -28,14 +29,14 @@ $(function(){
 	}
 	function postData(e)
 	{
+		var obj = new Array();
+		obj.push(this.id.substr(3));
+		obj.push("");
+		obj.push("");
+		obj.push("");
+		obj.push("");
+		obj.push($("#tv"+this.id.substr(3)).text());
 		
-		console.log($("#tv"+this.id.substr(3)).text());
-		function packageData(index, data)
-		{
-			this.index = index;
-			this.data = data;
-		}
-		var obj = new packageData(this.id.substr(3), $("#tv"+this.id.substr(3)).text());
 		$.ajax({
 		  type: 'POST',
 		  url: "PUT",
@@ -47,13 +48,16 @@ $(function(){
 	}
 	function insertData(e)
 	{
-		console.log($("#tab tr"+this.id.substr(3)).text());
-		function packageData(index, data)
+		console.log("insertData");
+		var obj = new Array();
+		var tr = $("tab tr:last");
+		
+		for(var i=0; i<5; i++)
 		{
-			this.index = index;
-			this.data = data;
+			obj.push($("#tab tr:last").find("td").eq(i).text());			
 		}
-		var obj = new packageData(this.id.substr(3), $("#tv"+this.id.substr(3)).text());
+		$("#tab tr:last").remove();
+		window.isUpdating=true;
 		$.ajax({
 		  type: 'POST',
 		  url: "PUT",
@@ -61,70 +65,73 @@ $(function(){
 		  //success: none,
 		  dataType: "json"
 		});
+		
 	}
 	function createTRStr(index)
 	{
 		trHtml = "<tr>"+
-		"<td><div contenteditable='true'></div></td>"+
-		"<td><div contenteditable='true'></div></td>"+
-		"<td><div contenteditable='true'></div></td>"+
-		"<td><div contenteditable='true'></div></td>"+
-		"<td><div contenteditable='true'></div></td>"+
+		"<td contenteditable='true'></td>"+
+		"<td contenteditable='true'></td>"+
+		"<td contenteditable='true'></td>"+
+		"<td contenteditable='true'></td>"+
+		"<td contenteditable='true'></td>"+
 		"<td>"+"<div id='tv"+index+"'" +
-		" class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+index+"'"+">sumit</button>"+"</td>"+"</tr>";
-		$("#btn"+item.index).click(insertData);
+		" class='tv' contenteditable='true'></div><button class='btn' "+"id='btnInsert'"+">sumit</button>"+"</td>"+"</tr>";
+		
+		return trHtml;
 	}
 	function upDateTB(htmlobj)
 	{
-		var jsonObj = JSON.parse(htmlobj);	
+		var jsonObj = JSON.parse(htmlobj);
+		var trHtml;
 		$(jsonObj).each(function(index, item){
-			var $tr=$("#tab tr").eq(index);
+			trHtml="";
+			var $tr=$("#tab").find(index).eq(index);
+			console.log($tr.size());
 			if($tr.size()==0){
-						//alert("指定的table id或行数不存在！");
-				return;
-			}
-			$tr1=$("#tab tr").eq(index+1);
-			if($tr1.size()!=0)
-			{						 
-				if(item.data[4])
-				{
-					console.log(item.data[4]);
-					$("#tv"+(index)).text(item.data[4]);
+				if(0==index){
+					trHtml = "<tr>"+
+					"<td>"+item[0]+"</td>"+
+					"<td>"+item[1]+"</td>"+
+					"<td>"+item[2]+"</td>"+
+					"<td>"+item[3]+"</td>"+
+					"<td>"+item[4]+"</td>"+	
+					"<td>"+item[5]+"</td></tr>";
+					$("#tab").html(trHtml);
+					
 				}
-				return;
-			}
-			trHtml = "<tr>"+
-			"<td>"+item.index+"</td>"+
-			"<td>"+item.name+"</td>"+
-			"<td>"+item.data[0]+"</td>"+
-			"<td>"+item.data[1]+"</td>"+
-			"<td>"+item.data[2]+"</td>"+
-			"<td>"+"<div id='tv"+item.index+"'" + " class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+item.index+"'"+">sumit</button>"+"</td>"+
-			"</tr>";
-					 
-			$tr.after(trHtml);
-			$("#btn"+item.index).click(postData);
-			$("#tv"+item.index).focus(function(){console.log("focus");window.isUpdating=false;});
-			$("#tv"+item.index).blur(function(){console.log("blur");window.isUpdating=true;});
+				else
+				{
+					trHtml = "<tr>"+
+					"<td>"+item[0]+"</td>"+
+					"<td>"+item[1]+"</td>"+
+					"<td>"+item[2]+"</td>"+
+					"<td>"+item[3]+"</td>"+
+					"<td>"+item[4]+"</td>"+
+					"<td>"+"<div id='tv"+index+"'" + " class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+index+"'"+">sumit</button>"+"</td>"+
+					"</tr>";	
+					$tr.after(trHtml);
+					$("#btn"+item.index).click(postData);
+					$("#tv"+item.index).focus(function(){console.log("focus");window.isUpdating=false;});
+					$("#tv"+item.index).blur(function(){console.log("blur");window.isUpdating=true;});					
+				}
+			}					 
+
 					 
 		});
 		
 	}
-	function insertTable_tr(index, trData)
+	function insertTable_tr()
 	{
-		var $tr=$("#tab tr").eq(index);
-		if($tr.size()!=0)
-		{
-			alert("the item exist");
-		}
-		var strTR = "<tr>";
-		$("#tab tr:last").after(createTRStr());
+		window.isUpdating=false;
+		var index = $("#tab tr:last").index() + 1;
+		$("#tab tr:last").after(createTRStr(index));
+		$("#btnInsert").click(insertData);
 		
 	}
 	
 	function requestUpate()
 	{
-		console.log(window.isUpdating);
 		if(window.isUpdating){
 		htmlobj = $.ajax(
 		{ 
