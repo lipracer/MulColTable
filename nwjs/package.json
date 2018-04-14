@@ -1,0 +1,7 @@
+{
+  "name": "helloworld",
+  "main": "./tableSer/main.html",
+  "window":{
+	"toolbar":false
+  }
+}
