@@ -32,7 +32,7 @@ $(function(){
     }
 
 	function syncData(){
-	//setInterval(requestUpate,1000);
+	setInterval(getUpDate,1000);
 	}
 	function postData(e)
 	{
@@ -91,29 +91,22 @@ $(function(){
 		
 		return trHtml;
 	}
-	function upDateTB(htmlobj)
+	function editItem()
 	{
-		var jsonObj = JSON.parse(htmlobj);
-		console.log(htmlobj);
+		$("#edit").css("display","inline");
+		$("#show").css("display","none");
+	}
+	function upDateTB()
+	{
+		var jsonObj = tabData.data;
+
 		var trHtml;
 
 		$(jsonObj).each(function(index, item){
 			trHtml="";
-			var $tr=$("#tab").find("tr").eq(index);
+			var $tr=$("#tab").find("tr").eq(index+1);
 			if($tr.size()==0){
-				if(0==index){
-					trHtml = "<tr>"+
-					"<td>"+item[0]+"</td>"+
-					"<td>"+item[1]+"</td>"+
-					"<td>"+item[2]+"</td>"+
-					"<td>"+item[3]+"</td>"+
-					"<td>"+item[4]+"</td>"+	
-					"<td>"+item[5]+"</td></tr>";
-					$("#tab").html(trHtml);
-					
-				}
-				else
-				{
+
 					$tr=$("#tab tr:last")
 					trHtml = "<tr>"+
 					"<td>"+item[0]+"</td>"+
@@ -121,18 +114,21 @@ $(function(){
 					"<td>"+item[2]+"</td>"+
 					"<td>"+item[3]+"</td>"+
 					"<td>"+item[4]+"</td>"+
-					"<td>"+"<div id='tv"+index+"'" + " class='tv' contenteditable='true'></div><button class='btn' "+"id='btn"+index+"'"+">sumit</button>"+"</td>"+
+					"<td><div id='show' contenteditable='true'></div><div id='edit' contenteditable='true'></div></td>"+
 					"</tr>";	
 					$tr.after(trHtml);
-					$("#btn"+index).click(postData);
-					$("#tv"+index).focus(function(){console.log("focus");window.isUpdating=false;});
-					$("#tv"+index).blur(function(){console.log("blur");window.isUpdating=true;});					
-				}
+					$("#edit").css("display","none");
+					$("#show").css("display","inline");
+					$("#show").click(editItem);				
 			}
-			else if(index!=0 && item.length==6)
+			else
 			{
-				console.log(""+index+" "+item[5]);
-				$("#tv"+index).text(item[5]);
+				var originStr = $("#tab").find("tr").eq(index+1).find("td").eq(5).text();
+				console.log(item[5]!==originStr);
+				if(item[5]!==originStr)
+				{
+					$("#tab").find("tr").eq(index+1).find("td").eq(5).text(item[5]);
+				}
 			}
 					 
 		});
@@ -175,7 +171,7 @@ $(function(){
 	{
 		tabData.data.splice(0, tabData.data.length);
 		tabData.data = JSON.parse(data);
-		console.log("Serdata:"+tabData.data);		
+		upDateTB();		
 	}
 	function insertTable()
 	{
