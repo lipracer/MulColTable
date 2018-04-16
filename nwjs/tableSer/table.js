@@ -114,18 +114,17 @@ $(function(){
 					"<td>"+item[2]+"</td>"+
 					"<td>"+item[3]+"</td>"+
 					"<td>"+item[4]+"</td>"+
-					"<td><div id='show' contenteditable='true'></div><div id='edit' contenteditable='true'></div></td>"+
+					"<td contenteditable='true'></td>"+
+					"<td><button>保存</button></td>"+
 					"</tr>";	
-					$tr.after(trHtml);
-					$("#edit").css("display","none");
-					$("#show").css("display","inline");
-					$("#show").click(editItem);				
+					$tr.after(trHtml);			
 			}
 			else
 			{
-				var originStr = $("#tab").find("tr").eq(index+1).find("td").eq(5).text();
-				console.log(item[5]!==originStr);
-				if(item[5]!==originStr)
+				var $td = $("#tab").find("tr").eq(index+1).find("td").eq(5);
+				var originStr = $td.text();
+		
+				if(item[5]!==originStr && !$td.is(':focus'))
 				{
 					$("#tab").find("tr").eq(index+1).find("td").eq(5).text(item[5]);
 				}
