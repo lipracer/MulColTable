@@ -19,6 +19,7 @@ $(function(){
 	$("#edit").click(editTable);
 	$("#insert").click(insertTR);
 	$("#update").click(updateSerTB);
+	$("#write").click(writeFile);
 	
 	
 	window.isUpdating = true;
@@ -159,8 +160,20 @@ $(function(){
 		window.isUpdating=false;
 		$("#showTB").css("display","none");
 		$("#editTB").css("display","inline");
-		getUpDate();
-		insertTable();
+		htmlobj = $.ajax(
+		{ 
+			type: "GET",
+			url: "update", 
+			context: "update",
+			cache: false,
+			success: function(data, textStatus, jqXHR)
+			{
+				tabData.data.splice(0, tabData.data.length);
+				tabData.data = JSON.parse(data);
+				insertTable();				
+			}
+		})	
+		
 	
 	}
 	function getUpDate()
@@ -189,20 +202,32 @@ $(function(){
 	}
 	function upTabDate(data, textStatus, jqXHR )
 	{
-		tabData.data.splice(0, tabData.data.length);
+		tabData.clear();
 		tabData.data = JSON.parse(data);
-		upDateTB();		
+		upDateTB();			
 	}
 	function insertTable()
 	{
+
 		$(tabData.data).each(function(i, ittr){
-			trHtml = "<tr>"
-			$(tabData.data).each(function(j, ittd){
-				trHtml+= "<td contenteditable='true'>"+ittd[0]+"</td>";
-			});
-			trHtml += "</tr>"
-		
+			var $tr=$("#tabEdit").find("tr").eq(i+1);
+			if($tr.size()==0)
+			{
+				console.log("empty");
+				var trHtml = "<tr>"
+				$(ittr).each(function(j, ittd){
+				var trStr = ittd?ittd:"";
+				trHtml+= "<td contenteditable='true'>"+trStr+"</td>";
+				});
+				trHtml += "</tr>";
+				var $trl=$("#tabEdit tr:last")
+				$trl.after(trHtml);				
+			}
+
+					
 		});
+		var sizeRow = $("#tabEdit").find("tr").length;
+		console.log("sizeRow:" + sizeRow);
 	}
 	function insertTR()
 	{
@@ -221,6 +246,7 @@ $(function(){
 		var sizeRow = $(idTB).find("tr").length;
 		var sizeCol = 6;
 		console.log(sizeRow + ":" + sizeCol);
+		console.log("length:"+tabData.data.length);
 		for(var i=1; i<sizeRow; i++)
 		{
 			var trData = new Array();
@@ -229,20 +255,29 @@ $(function(){
 				var celltext = $(idTB).find("tr").eq(i).find("td").eq(j).text();
 				trData.push(celltext);
 			}
-			console.log("trData"+trData);
+			console.log("trData:"+trData);
 			tabData.insert(trData);			
 		}
 		console.log(tabData.data);
 	}
 	function updateSerTB()
 	{
-
 		tabData.clear();
 		collectTableData("#tabEdit");
 		postUpDate();
 		$("#showTB").css("display","inline");
 		$("#editTB").css("display","none");
-		getUpDate();
 		//insertTable();
+	}
+	function writeFile()
+	{
+		htmlobj = $.ajax(
+		{ 
+			type: "GET",
+			url: "write", 
+			context: "write",
+			cache: false,
+			//success: upTabDate
+		})		
 	}
 })

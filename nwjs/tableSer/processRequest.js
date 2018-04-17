@@ -3,6 +3,7 @@ document.write(msg+"</br>");}
 var fs = require('fs');
 var url = require('url');
 var querystring = require('querystring');
+var cp=require('child_process')
 tab = new tableObj();
 
 function reqHandle(incomingMessage, response)
@@ -23,6 +24,27 @@ function reqHandle(incomingMessage, response)
 			this.response.writeHead(200, {'Content-Type': 'text/html'}); 
 			this.response.write(JSON.stringify(tab.data)); 
 			this.response.end();
+			return;
+		}
+		else if(-1 != this.pathname.indexOf("write"))
+		{
+			this.response.writeHead(200, {'Content-Type': 'text/html'}); 
+			log("write");
+			this.response.end();
+				
+
+			cp.exec('python write.py ' + JSON.stringify(tab.data),
+			function(err, stdout, stderr){
+
+			if (err){
+				log('stderr', err);
+			}
+
+			if (stdout){
+				log('stdout', stdout); 
+			}
+
+			});
 			return;
 		}
 		else{
