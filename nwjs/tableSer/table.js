@@ -115,9 +115,25 @@ $(function(){
 					"<td>"+item[3]+"</td>"+
 					"<td>"+item[4]+"</td>"+
 					"<td contenteditable='true'></td>"+
-					"<td><button>保存</button></td>"+
+					"<td><button " + "id='btn"+index+"'"+ ">保存</button></td>"+
 					"</tr>";	
-					$tr.after(trHtml);			
+					$tr.after(trHtml);
+					$("#btn"+index).click(submit);
+					function submit()
+					{
+						var index = Number(this.id.substr(3));						
+						var data = $("#tab").find("tr").eq(index+1).find("td").eq(5).text();
+						console.log(data);						
+						$.ajax({
+						 type: 'POST',
+						 url: "PUT",
+						 data: JSON.stringify({index, data}),
+						 //success: none,
+						 dataType: "json"
+						});
+								
+					}
+					
 			}
 			else
 			{
@@ -135,6 +151,11 @@ $(function(){
 	}
 	function editTable()
 	{
+		var theResponse = window.prompt("请输入密码：");
+		if(theResponse!="666")
+		{
+			return;
+		}
 		window.isUpdating=false;
 		$("#showTB").css("display","none");
 		$("#editTB").css("display","inline");
@@ -215,6 +236,7 @@ $(function(){
 	}
 	function updateSerTB()
 	{
+
 		tabData.clear();
 		collectTableData("#tabEdit");
 		postUpDate();

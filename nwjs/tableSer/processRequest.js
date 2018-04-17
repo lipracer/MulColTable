@@ -4,7 +4,6 @@ var fs = require('fs');
 var url = require('url');
 var querystring = require('querystring');
 tab = new tableObj();
-tab.insert(["n","n","n","n","n","n"]);
 
 function reqHandle(incomingMessage, response)
 {
@@ -58,9 +57,17 @@ function reqHandle(incomingMessage, response)
 		this.req.on('end', function () {
 			
 			log("body:"+body);
-			tab.clear();
-			log("clear");
-			tab.data = JSON.parse(body);
+
+			if(-1 != that.pathname.indexOf("PUT"))
+			{
+				var data = JSON.parse(body);
+			    tab.data[data["index"]][5] = data["data"];
+			}
+			else
+			{
+				tab.clear();
+			    tab.data = JSON.parse(body);
+			}
 			that.response.writeHead(200, {'Content-Type': 'text/html'}); 
 			that.response.write(JSON.stringify(tab.data)); 
 			that.response.end();
