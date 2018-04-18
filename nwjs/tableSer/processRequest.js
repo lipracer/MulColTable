@@ -33,7 +33,7 @@ function reqHandle(incomingMessage, response)
 			this.response.end();
 				
 
-			cp.exec('python write.py ' + JSON.stringify(tab.data),
+			cp.exec('python tableSer\write.py ' + JSON.stringify(tab.data),
 			function(err, stdout, stderr){
 
 			if (err){
