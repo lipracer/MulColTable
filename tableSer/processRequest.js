@@ -2,13 +2,14 @@ function log(msg){
 document.write(msg+"</br>");}
 var fs = require('fs');
 var url = require('url');
-var querystring = require('querystring');
-var cp=require('child_process')
-tab = new tableObj();
+//var querystring = require('querystring');
+var cp = require('child_process')
 
 function reqHandle(incomingMessage, response)
 {
+	log("new handler");	
 	this.req = incomingMessage;
+	log(JSON.stringify(incomingMessage.headers));
 	this.response = response;
 	this.msg = new Array();
 	this.msg["GET"] = handleGet;
@@ -18,53 +19,26 @@ function reqHandle(incomingMessage, response)
 	
 	function handleGet()
 	{
-		var that = this;
-		if(-1 != this.pathname.indexOf("update"))
+		var that = this;	
+		log(this.pathname);	
+		
+		fs.readFile("./tableSer"+decodeURI(this.pathname), function (err, data)
 		{
-			this.response.writeHead(200, {'Content-Type': 'text/html'}); 
-			this.response.write(JSON.stringify(tab.data)); 
-			this.response.end();
-			return;
-		}
-		else if(-1 != this.pathname.indexOf("write"))
-		{
-			this.response.writeHead(200, {'Content-Type': 'text/html'}); 
-			log("write");
-			this.response.end();
-				
-
-			cp.exec('python tableSer\write.py ' + JSON.stringify(tab.data),
-			function(err, stdout, stderr){
-
-			if (err){
-				log('stderr', err);
-			}
-
-			if (stdout){
-				log('stdout', stdout); 
-			}
-
-			});
-			return;
-		}
-		else{
-			fs.readFile("./tableSer"+this.pathname, function (err, data)
+			
+			if (err) 
 			{
-				
-				if (err) 
-				{
-					log(err);
-					that.response.writeHead(404, {'Content-Type': 'text/html'});
-					that.response.end();	
-				}
-				else
-				{      
-					that.response.writeHead(200, {'Content-Type': 'text/html'});			
-					that.response.write(data.toString()); 				
-					that.response.end();				
-				}				
-			});	
-		}
+				log(err);
+				that.response.writeHead(404, {'Content-Type': 'text/html'});
+				that.response.end();	
+			}
+			else
+			{      
+				that.response.writeHead(200, {'Content-Type': 'text/html'});			
+				that.response.write(data); 				
+				that.response.end();				
+			}				
+		});	
+		
 	}
 	function handlePost()
 	{
@@ -80,16 +54,7 @@ function reqHandle(incomingMessage, response)
 			
 			log("body:"+body);
 
-			if(-1 != that.pathname.indexOf("PUT"))
-			{
-				var data = JSON.parse(body);
-			    tab.data[data["index"]][5] = data["data"];
-			}
-			else
-			{
-				tab.clear();
-			    tab.data = JSON.parse(body);
-			}
+			
 			that.response.writeHead(200, {'Content-Type': 'text/html'}); 
 			that.response.write(JSON.stringify(tab.data)); 
 			that.response.end();
